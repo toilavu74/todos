@@ -31,7 +31,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/edit-todo/:id",
+    path: "/todos/edit/:id",
     name: "Edit",
     component: () =>
       import(/* webpackChunkName: "edit" */ "../views/todos/edit.vue"),

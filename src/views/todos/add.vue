@@ -95,6 +95,8 @@ export default {
         name: newData.name,
         description: newData.description,
         completed: false,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       };
       //console.log(data);
       await addTodo(data);

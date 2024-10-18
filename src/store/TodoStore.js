@@ -1,6 +1,15 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import { collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/config/firebase.js";
 import { useAuthStore } from "@/store/AuthStore.js";
 
@@ -25,7 +34,7 @@ export const useTodoStore = defineStore("todo", () => {
     }
   };
 
-  async function getTodo() {
+  const getTodo = async () => {
     error.value = null;
     try {
       const todoRef = query(
@@ -42,6 +51,33 @@ export const useTodoStore = defineStore("todo", () => {
       console.log(err);
       error.value = err.message;
     }
-  }
-  return { addTodo, isPending, error, getTodo };
+  };
+  const editTodo = async (id) => {
+    try {
+      const todoRef = doc(db, "todos", id);
+      const querySnapshot = await getDoc(todoRef);
+      if (querySnapshot.exists()) {
+        return querySnapshot.data();
+      } else {
+        throw new Error("Todo does not exist");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const updateTodo = async (id, data) => {
+    try {
+      isPending.value = true;
+      const todoRef = doc(db, "todos", id);
+      const respon = await updateDoc(todoRef, {
+        ...data,
+      });
+      return respon;
+    } catch (err) {
+      console.log(err);
+    } finally {
+      isPending.value = false;
+    }
+  };
+  return { addTodo, isPending, error, getTodo, editTodo, updateTodo };
 });
